@@ -12,7 +12,6 @@ Fixpoint domA (E : env_amber) : atoms :=
   | (X,Y)::E' => {{X}} \u {{Y}} \u domA E'
   end.
 
-(** Well-formed Environment *)
 Inductive wfe_amber: env_amber -> Prop :=
 | wfea_base:
     wfe_amber nil
@@ -22,7 +21,6 @@ Inductive wfe_amber: env_amber -> Prop :=
     wfe_amber E ->
     wfe_amber ((X,Y)::E).
 
-(** Well-formed Types for amber rules *)
 Inductive wf_amber: env_amber -> typ -> Prop :=
 | wfa_nat: forall E,
     wfe_amber E ->
@@ -48,7 +46,7 @@ Inductive wf_amber: env_amber -> typ -> Prop :=
         wf_amber (X ~ Y ++ E) (open_tt A X)) ->
     wf_amber E (typ_mu A).
     
-(** Folkfore Amber rules *)
+
 Inductive sub_amber: env_amber -> typ -> typ -> Prop :=
 | sam_nat: forall E,
     wfe_amber E ->
@@ -75,7 +73,6 @@ Inductive sub_amber: env_amber -> typ -> typ -> Prop :=
     wf_amber E (typ_mu A) ->
     sub_amber E (typ_mu A) (typ_mu A).
 
-(** Positive restriction *)
 Inductive posvar: Mode -> atom -> typ -> typ -> Prop :=
 | pos_nat: forall X m,
     posvar m X typ_nat typ_nat
@@ -106,7 +103,6 @@ Inductive posvar: Mode -> atom -> typ -> typ -> Prop :=
                type (open_tt A Y)) ->
     posvar m X (typ_mu A) (typ_mu A).
 
-(** Positive subtyping *)
 Inductive sub_amber2: env -> typ -> typ -> Prop :=
 | sam2_nat: forall E,
     wf_env E ->
@@ -127,7 +123,7 @@ Inductive sub_amber2: env -> typ -> typ -> Prop :=
     (forall X , X \notin L -> 
                 sub_amber2 (X ~ bind_sub ++ E) (open_tt A X) (open_tt B X)) ->
     (forall X , X \notin L ->
-                posvar Pos X (typ_mu A) (typ_mu B)) ->
+                posvar Pos X (open_tt A X) (open_tt B X)) ->
     sub_amber2 E (typ_mu A) (typ_mu B)
 | sam2_refl: forall E A,
     wf_env E ->
@@ -376,7 +372,6 @@ Proof with eauto.
     split;apply WF_rec with (L:=L \u fv_tt A \u fv_tt B);intros;eapply H0...
 Qed.
 
-(** Translation of environments and types from the Amber rules *)
 Fixpoint env_trans (E : env_amber) : env :=
   match E with
   | nil => nil
@@ -1416,7 +1411,6 @@ Proof with auto.
     apply subst_tt_type...
 Qed.    
     
-(** Lemma 25 *)
 Lemma sub_amber_to_amber_2: forall E A B,
     sub_amber E A B ->
     sub_amber2 (env_trans E) (rename_env E A) (rename_env E B).
@@ -1467,47 +1461,19 @@ Proof with auto using notin_fv_domA, notin_fv_tt_open_aux.
       assert (X \notin L) as Hx by auto.
       assert (Y \notin {{X}} \u L) as Hy by auto.
       specialize (H _ _ Hx Hy).
-      apply pos_rec with (L:=L \u domA E \u fv_tt A \u fv_tt B \u {{X}} \u {{Y}} ).
-      *
-        intros.
-        apply sub_amber_to_posvar_aux with (X:=X) (Y:=Y) in H.
-        destruct H.
-        assert (Y `notin` fv_tt (open_tt A X)).
-        apply notin_fv_tt_open_aux...
-        assert (X `notin` fv_tt (open_tt B Y)).
-        apply notin_fv_tt_open_aux...
-        specialize (H H4 H5).
-        simpl in H.
-        rewrite <- subst_tt_fresh in H...
-        rewrite rename_subst in H...
-        rewrite rename_open in H...
-        rewrite rename_open in H...
-        rewrite subst_tt_intro with (X:=X)...
-        remember (subst_tt X Y0 (open_tt (rename_env E A) X)).
-        rewrite subst_tt_intro with (X:=X)...
-        subst.
-        apply pos_rename_2...
-        apply in_eq...
-      *
-        intros.
-        apply sub_amber_to_posvar_aux with (X:=X) (Y:=Y) in H.
-        destruct H.
-        assert (Y `notin` fv_tt (open_tt A X)).
-        apply notin_fv_tt_open_aux...
-        assert (X `notin` fv_tt (open_tt B Y)).
-        apply notin_fv_tt_open_aux...
-        specialize (H H4 H5).
-        simpl in H.
-        rewrite <- subst_tt_fresh in H...
-        rewrite rename_subst in H...
-        rewrite rename_open in H...
-        rewrite rename_open in H...
-        rewrite subst_tt_intro with (X:=X)...
-        remember (subst_tt X Y0 (open_tt (rename_env E A) X)).
-        rewrite subst_tt_intro with (X:=X)...
-        subst.
-        apply pos_rename_1...
-        apply in_eq...
+      apply sub_amber_to_posvar_aux with (X:=X) (Y:=Y) in H.
+      destruct H.
+      assert (Y `notin` fv_tt (open_tt A X)).
+      apply notin_fv_tt_open_aux...
+      assert (X `notin` fv_tt (open_tt B Y)).
+      apply notin_fv_tt_open_aux...
+      specialize (H H3 H4).
+      simpl in H.
+      rewrite <- subst_tt_fresh in H...
+      rewrite rename_subst in H...
+      rewrite rename_open in H...
+      rewrite rename_open in H...
+      apply in_eq...
   -
     rewrite rename_mu...
     apply sam2_refl...

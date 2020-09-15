@@ -4,7 +4,7 @@ Require Export amber_part_1.
 Require Export decidability.
 
 
-Definition mode_xor (m1 m2 : Mode) : Mode :=
+Fixpoint mode_xor (m1 m2 : Mode) : Mode :=
   match m1 with
   | Pos => match m2 with
            | Pos => Pos
@@ -334,7 +334,6 @@ Proof with auto.
     apply type_mu with (L:=L \u {{X}})...
 Qed.    
   
-(** Lemma 23 *)
 Lemma posvar_keeps_sign : forall X Y A B m,
     posvar Pos Y A B ->
     Y <> X ->
@@ -605,7 +604,7 @@ Proof with auto.
         apply notin_fv_tt_open_aux...
 Qed.
 
-(** Lemma 26 *)
+
 Lemma sub_single_implies_double: forall E A B C D X,
       sub E A B ->
       posvar Pos X A B ->
@@ -616,7 +615,7 @@ Proof with auto.
   apply sub_single_implies_double1 with (C:=C) (D:=D) (X:=X) in H...
 Qed.
   
-(** Lemma 27 *)
+
 Lemma sub_amber_2_to_sub: forall E A B,
     sub_amber2 E A B ->
     sub E A B.
@@ -629,7 +628,6 @@ Proof with auto.
     intros.
     assert (X \notin L) by auto.
     apply H1 in H3.
-    dependent destruction H3.
     pick fresh Y.
     rewrite <- open_subst_twice with (X:=Y)...
     remember (subst_tt Y X (open_tt A (open_tt A Y))).
@@ -648,28 +646,17 @@ Proof with auto.
     simpl.
     constructor...
     assert (Y \notin L) by auto.
-    apply H0 in H5.
-    apply soundness in H5.
-    apply sub_regular in H5.
-    destruct H5.
-    dependent destruction H5...
-    apply completeness.
-    assert (X \notin L) by auto.
-    apply H0 in H5.
-    apply soundness in H5.
-    apply sub_regular in H5.
-    destruct H5.
-    destruct H6.
-    apply refl...
-    rewrite subst_tt_intro with (X:=X)...
-    apply subst_tt_wfs...
+    apply H0 in H4.
+    apply soundness in H4.
+    apply sub_regular in H4.
+    destruct H4.
+    dependent destruction H4...
   -
     apply completeness.
     apply refl...
     apply soundness_wf...
 Qed.
 
-(** Theorem 28 (Soundness of the Amber rules) *)
 Theorem amber_soundness: forall E A B,
     sub_amber E A B ->
     sub (env_trans E) (rename_env E A) (rename_env E B).
