@@ -1,6 +1,12 @@
 Revisiting Iso-Recursive Subtyping (Artifact)
 -----
 
+## Update (2020-11-19)
+After getting accepted by OOPSLA, I thought out a new simpler proof for proving unfolding lemma and soundness.
+As the result, there is no need to define ```subderivation```. 
+You can feel free for forgetting section 4.3 .
+The complete proof can be found at file ```subtyping2.v```.
+
 ## Abstract
 This bundle contains the Coq formulation associated with the paper "Revisiting Iso-Recursive Subtyping". This document explains how to run the Coq formulations. 
 
