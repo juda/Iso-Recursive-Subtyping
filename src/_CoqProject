@@ -7,4 +7,5 @@ typesafety.v
 decidability.v
 amber_part_1.v
 amber_part_2.v
-
+subtyping2.v
+subtyping3.v

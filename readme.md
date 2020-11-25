@@ -1,10 +1,25 @@
 Revisiting Iso-Recursive Subtyping (Artifact)
 -----
 
+## Update (2020-11-25)
+![Poster](poster.jpg)
+Compared with the OOPSLA paper, we add some new contents in our poster.
+For example, we show that we have proven the unfolding lemma on algorithmic system. The proof script is quite simple and elegant.
+
+Below is the table that guides you to the positions of all lemmas.
+
+|  | Reflexivity | Transitivity | Algorithmic | Unfolding lemma |
+|  ----  | ----  | ---- | ---- | ---- |
+| Amber rules | built-in | N/A | Y | N/A |
+| Positive variable | built-in | ```sub_amber2_trans```(subtyping3.v) | Y | ```unfolding_for_pos```(subtyping3.v) |
+| Finite unfolding (declarative) | ```refl```(subtyping.v) | ```Transitivity ``` (subtyping.v) | N | ```unfolding_lemma```(subtyping.v) |
+| Double unfolding (algorithmic) | ```refl_algo``` (subtyping.v) | ```trans_algo```(subtyping.v) | Y | ```unfolding_lemma_version2```(subtyping2.v) | 
+
+
 ## Update (2020-11-19)
-After getting accepted by OOPSLA, I thought out a new simpler proof for proving unfolding lemma and soundness.
+After getting conditional accepted by OOPSLA, I thought out a new simpler proof for proving unfolding lemma and soundness.
 As the result, there is no need to define ```subderivation```. 
-You can feel free for forgetting section 4.3 .
+You can feel free to forget section 4.3 .
 The complete proof can be found at file ```subtyping2.v```.
 
 ## Abstract
