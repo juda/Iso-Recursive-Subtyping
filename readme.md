@@ -1,6 +1,9 @@
 Revisiting Iso-Recursive Subtyping (Artifact)
 -----
 
+## Update (2020-11-27)
+Thanks to [Prof. John Boyland](https://uwm.edu/engineering/people/boyland-ph-d-john/) for providing another kind of proof to this paper. It uses [SASyLf](https://github.com/boyland/sasylf), a proof assistant that using HOAS (higher order abstract syntax) technique while the original Coq proof uses locally nameless. You can find the full proofs in file ```iso-recursive-sub2.slf```.
+
 ## Update (2020-11-25)
 ![Poster](poster.jpg)
 Compared with the OOPSLA paper, we add some new contents in our poster.
