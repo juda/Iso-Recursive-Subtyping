@@ -135,7 +135,7 @@ Proof with auto.
   -
     left.
     constructor...
-    apply wf_type in H...
+    apply wfa_type in H...
   -
     destruct m;simpl in *;destruct (X==X0);subst...
     right.
@@ -163,8 +163,8 @@ Proof with auto.
     assert (Hq:=H2).
     apply suba2_regular in H2.
     destruct_hypos.
-    apply wf_type in H7.
-    apply wf_type in H8.
+    apply wfa_type in H7.
+    apply wfa_type in H8.
     dependent destruction H1...
     +
       assert (sub_amber2 ( nil ++ [(X, bind_sub)] ++ E) C D).
@@ -228,10 +228,10 @@ Proof with auto.
     apply tp_rec with (L:=L )...
 Qed.   
 
-Lemma wf_replacing: forall E1 E2 T X Y,
-    WF (E1++ X ~ bind_sub ++E2) T ->
+Lemma wfa_replacing: forall E1 E2 T X Y,
+    WFA (E1++ X ~ bind_sub ++E2) T ->
     X <> Y ->
-    WF (E1++ Y ~ bind_sub ++E2) (subst_tt X Y T).
+    WFA (E1++ Y ~ bind_sub ++E2) (subst_tt X Y T).
 Proof with auto.
   intros.
   generalize dependent Y.
@@ -247,7 +247,7 @@ Proof with auto.
     constructor...
   -
     simpl.
-    apply WF_rec with (L:=L \u {{X}}).
+    apply WFA_rec with (L:=L \u {{X}}).
     intros.
     rewrite subst_tt_open_tt_var...
     rewrite_alist (([(X0, bind_sub)] ++ E1) ++ Y ~ bind_sub ++ E2).
@@ -265,7 +265,7 @@ Proof with auto.
   dependent induction H;intros;try solve [simpl in *;auto]...
   -
     constructor...
-    apply wf_replacing...
+    apply wfa_replacing...
   -
     simpl.
     destruct (X0==X)...
@@ -295,6 +295,9 @@ Proof with auto.
   intros.
   assert (Ht:=H).
   induction H...
+  constructor...
+  apply soundness_wf in H0...
+  apply completeness_wfa...
   pick fresh X.
   specialize_x_and_L X L.
   specialize (H0 H).

@@ -274,6 +274,21 @@ Ltac gather_atoms ::=
   let F := gather_atoms_with (fun x : env => dom x) in
   constr:(A `union` B `union`  E \u C \u D \u F).
 
+Inductive WFA : env -> typ -> Prop :=
+| WFA_top : forall E, WFA E typ_top
+| WFA_nat : forall E, WFA E typ_nat
+| WFA_fvar : forall X E,
+    binds X bind_sub E ->
+    WFA E (typ_fvar X)
+| WFA_arrow : forall E A B,
+    WFA E A ->
+    WFA E B ->
+    WFA E (typ_arrow A B)
+| WFA_rec : forall L E A,
+      (forall X, X \notin L -> 
+                 WFA (X ~ bind_sub ++ E) (open_tt A X)) ->
+      WFA E (typ_mu A).
+
 Inductive WF : env -> typ -> Prop :=
 | WF_top : forall E, WF E typ_top
 | WF_nat : forall E, WF E typ_nat
@@ -286,7 +301,9 @@ Inductive WF : env -> typ -> Prop :=
     WF E (typ_arrow A B)
 | WF_rec : forall L E A,
       (forall X, X \notin L -> 
-        WF (X ~ bind_sub ++ E) (open_tt A X)) ->
+                 WF (X ~ bind_sub ++ E) (open_tt A X)) ->
+      (forall X, X \notin L -> 
+                 WF (X ~ bind_sub ++ E) (open_tt A (open_tt A X))) ->
       WF E (typ_mu A).
 
 Inductive sub : env -> typ -> typ -> Prop :=
@@ -323,7 +340,7 @@ Definition flip (m : Mode) : Mode :=
   end.
 
 
-Hint Constructors Sub WFS typing step value expr wf_env sub WF : core.
+Hint Constructors Sub WFS typing step value expr wf_env sub WF WFA: core.
 
 
 Fixpoint UnfoldS n X A :=
