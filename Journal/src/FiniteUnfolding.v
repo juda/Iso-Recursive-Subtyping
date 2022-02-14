@@ -1,6 +1,6 @@
 Require Import Metalib.Metatheory.
 Require Import Program.Equality.
-Require Export infra.
+Require Export Infra.
 
 Lemma sub_regular : forall E A B,
     Sub E A B -> wf_env E /\ WFS E A /\ WFS E B.

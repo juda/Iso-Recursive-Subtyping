@@ -1,7 +1,7 @@
 Require Import Metalib.Metatheory.
 Require Import Program.Equality.
-Require Export amber_part_2.
-Require Export subtyping4.
+Require Export AmberSoundness.
+Require Export PositiveSubtyping.
 
 
 Definition env_mode := list ( Mode).

@@ -7,7 +7,9 @@ Inductive typ : Set :=
 | typ_bvar  : nat -> typ
 | typ_fvar  : var -> typ
 | typ_mu :    typ -> typ
-| typ_arrow : typ -> typ -> typ.
+| typ_arrow : typ -> typ -> typ
+.
+
 
 Coercion typ_bvar : nat >-> typ.
 Coercion typ_fvar : atom >-> typ.
@@ -19,7 +21,7 @@ Fixpoint open_tt_rec (K : nat) (U : typ) (T : typ) {struct T} : typ :=
   | typ_bvar J      => if K === J then U else (typ_bvar J)
   | typ_fvar X      => typ_fvar X 
   | typ_arrow T1 T2 => typ_arrow (open_tt_rec K U T1) (open_tt_rec K U T2)
-  | typ_mu T        => typ_mu (open_tt_rec (S K) U T)
+  | typ_mu T        => typ_mu (open_tt_rec (S K) U T)                          
   end.
 
 (* T type U name *)
@@ -40,7 +42,9 @@ Inductive type : typ -> Prop :=
       type (typ_arrow T1 T2)
   | type_mu : forall L T,
       (forall X, X \notin L -> type (open_tt T (typ_fvar X))) ->
-      type (typ_mu T).
+      type (typ_mu T)
+.
+
 
 Hint Constructors type : core.
 
@@ -52,7 +56,7 @@ Fixpoint subst_tt (Z : atom) (U : typ) (T : typ) {struct T} : typ :=
   | typ_bvar J => typ_bvar J
   | typ_fvar X => if X == Z then U else (typ_fvar X)
   | typ_arrow T1 T2 => typ_arrow (subst_tt Z U T1) (subst_tt Z U T2)
-  | typ_mu T => typ_mu (subst_tt Z U T) 
+  | typ_mu T => typ_mu (subst_tt Z U T)                    
   end.
 
 Fixpoint fv_tt (T : typ) {struct T} : atoms :=

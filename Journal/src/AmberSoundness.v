@@ -1,7 +1,6 @@
 Require Import Metalib.Metatheory.
 Require Import Program.Equality.
-Require Export amber_part_1.
-Require Export decidability.
+Require Export AmberBase.
 
 
 Fixpoint mode_xor (m1 m2 : Mode) : Mode :=

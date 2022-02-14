@@ -1,8 +1,8 @@
 Require Import Metalib.Metatheory.
 Require Import Program.Equality.
-Require Export definition.
-Require Export infra.
-Require Export subtyping2.
+Require Export Rules.
+Require Export Infra.
+Require Export DoubleUnfolding.
 
 Definition env_amber := list (atom * atom).
 
@@ -500,6 +500,7 @@ Lemma rename_mu : forall E A, rename_env E (typ_mu A) = typ_mu (rename_env E A).
 Defined.
 
 
+
 Lemma domA_X_neq_Y: forall E X Y,
     wfe_amber E -> In (X, Y) E -> X <> Y.
 Proof with auto.
@@ -893,7 +894,8 @@ Proof with auto.
     apply notin_fv_domA...
     apply notin_fv_tt_open_aux...
 Qed.          
-    
+
+
 Lemma posvar_self_notin: forall A m X ,
     type A ->
     X \notin fv_tt A ->
@@ -913,26 +915,17 @@ Proof with auto.
   -
     simpl in *.
     apply pos_rec_t with (L:=L \u fv_tt T)...
-Qed.
+Qed. 
 
 Lemma rename_env_open: forall A X Y,
     X <> Y ->
     X `notin` fv_tt (open_tt A Y) ->
     X \notin fv_tt A.
-Proof with auto.
+Proof with eauto.
   unfold open_tt.
   intros A.
   generalize 0.
   induction A;intros;simpl in *...
-  -
-    apply IHA with (n:=S n) (Y:=Y)...
-  -
-    apply notin_union in H0.
-    destruct H0.
-    apply notin_union...
-    split...
-    eapply IHA1...
-    eapply IHA2...
 Qed.    
 
 Lemma rename_notin_X: forall E X Y A,

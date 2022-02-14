@@ -1,6 +1,6 @@
 Require Import Metalib.Metatheory.
 Require Import Program.Equality.
-Require Export subtyping3.
+Require Export PositiveBase.
 
 Lemma chooseS_flip : forall m X A B C,
     chooseS m X A B C = chooseS (flip m) X B A C.

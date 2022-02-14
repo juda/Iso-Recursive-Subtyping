@@ -1,6 +1,6 @@
 Require Import Metalib.Metatheory.
 Require Import Program.Equality.
-Require Export definition.
+Require Export Rules.
 
 Ltac destruct_hypos :=
   repeat
@@ -260,24 +260,6 @@ Proof.
     apply in_eq.
 Qed.
 
-Lemma type_subst : forall A, 
-    forall X B, type B -> type (subst_tt X B A) -> type A.
-  intros.
-  dependent induction H0.
-  - destruct A; simpl in *; inversion x; eauto.
-  - destruct A; simpl in *; inversion x; eauto.
-  - destruct A; simpl in *; inversion x; eauto.
-  - destruct A; simpl in *; inversion x; eauto.
-  - destruct A; simpl in *; inversion x; eauto.
-    apply type_mu with (L := union L (singleton X)).
-    intros.
-    assert (X0 \notin L) by eauto.
-    assert (X0 \notin L) by eauto.
-    apply H1 in H4. subst.
-    eapply (H0 X0 H5 B H X); eauto.
-    subst.
-    apply subst_tt_open_tt_var; eauto.
-Defined.
 
 Lemma subst_open_unfoldn: forall A B n X Y,
     X <> Y -> type B ->
@@ -318,16 +300,11 @@ Lemma subst_open_tt_rec : forall T A, type A -> forall Y X,
     X `notin` fv_tt T -> forall n,
         subst_tt X Y (open_tt_rec n A T) = open_tt_rec n (subst_tt X Y A) T.
 Proof with auto.
-  induction T; intros; unfold open_tt in *; simpl in *; eauto.
+  induction T; intros; unfold open_tt in *; simpl in *; try solve [f_equal;eauto]; eauto.
   - destruct (n0 == n); simpl; eauto.
   - destruct (a == X); simpl; eauto; subst.
     apply notin_singleton_1 in H1.
     destruct H1...
-  - specialize (IHT A H Y X H0 H1 (S n)).
-    rewrite IHT.
-    eauto.
-  -
-    f_equal...
 Qed.
 
 Lemma unfoldSn: forall A n X,
@@ -430,13 +407,8 @@ Lemma notin_fv_subst: forall X A B Y,
     X \notin fv_tt (subst_tt Y A B).
 Proof with auto.
   intros.
-  induction B...
-  -
-    simpl.
-    destruct (a == Y)...
-  -
-    simpl in *.
-    apply notin_union...
+  induction B;simpl in *...
+  destruct (a == Y)...
 Qed.
 
 Lemma notin_union: forall X A B,
@@ -649,17 +621,14 @@ Lemma in_open0: forall A X Y k,
 Proof with auto.
   intros.
   generalize dependent k.
-  induction Y;intros...
+  induction Y;intros;simpl in *...
   -
-    simpl in H.
     destruct (k==n)...
   -
-    simpl in *.
     specialize (IHY (S k)).
     apply IHY in H.
     destruct H...
   -
-    simpl in *.
     apply AtomSetImpl.union_1 in H. 
     destruct H.
     specialize (IHY1 k).
@@ -783,3 +752,12 @@ Proof with auto.
   rewrite <- H...
   rewrite subst_tt_intro with (X:=X)...
 Qed.
+
+Ltac solve_notin :=
+  repeat
+    match goal with
+    | [H : _ |- _ \notin fv_tt (open_tt _ _) ] => apply notin_fv_tt_open
+    | [H : _ |- _ \notin fv_tt (subst_tt _ _ _) ] => apply notin_fv_subst
+    | [H : _ |- _ \notin (_ \u _) ] => apply notin_union;split
+    | [H : _ |- _ \notin _ ] => simpl;auto               
+    end.

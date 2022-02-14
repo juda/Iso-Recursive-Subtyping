@@ -1,6 +1,6 @@
 Require Import Metalib.Metatheory.
 Require Import Program.Equality.
-Require Export subtyping.
+Require Export FiniteUnfolding.
 
 Lemma wf_typ_from_wf_env_typ : forall x T E,
   wf_env (x ~ bind_typ T ++ E) ->
@@ -269,18 +269,15 @@ Lemma typing_inv_abs : forall E S1 e1 T,
      typing (x ~ bind_typ S1 ++ E) (open_ee e1 x) S2 /\ Sub E S2 U2.
 Proof with auto.
   intros E S1 e1 T Typ.
-  remember (exp_abs S1 e1) as e.
-  generalize dependent e1.
-  generalize dependent S1.
-  induction Typ; intros S1 b1 EQ U1 U2 Sub; inversion EQ; subst.
+  dependent induction Typ;intros...
   -
-    inversion Sub; subst.
+    dependent destruction H1.
     split...
     exists T2. exists L...
   -
-    assert (definition.Sub G S (typ_arrow U1 U2)).
+    assert (Sub G S (typ_arrow U1 U2)).
     apply Transitivity with (B:=T)...
-    assert (typing G (exp_abs S1 b1) (typ_arrow U1 U2)).
+    assert (typing G (exp_abs S1 e1) (typ_arrow U1 U2)).
     apply typing_sub with (S:=S)...
     dependent destruction H2...
 Qed.

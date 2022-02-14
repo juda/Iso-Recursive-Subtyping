@@ -1,7 +1,7 @@
 Require Import Metalib.Metatheory.
 Require Import Program.Equality.
-Require Export amber_part_2.
-Require Export subtyping2.
+Require Export AmberSoundness.
+Require Export DoubleUnfolding.
 
 Lemma subst_tt_wf_v2: forall E1 E2 A B X,
     WF (E1 ++ X ~ bind_sub ++ E2) B ->
@@ -575,3 +575,82 @@ Proof with auto.
       apply sam2_rec with (L:=L0)...
       apply sam2_rec with (L:=L1)...
 Qed.
+
+Inductive wk_sub: env -> typ -> typ -> Prop :=
+| W_nat: forall E,
+    wf_env E ->
+    wk_sub E typ_nat typ_nat
+| W_top: forall E A,
+    WFA E A ->
+    wf_env E ->
+    wk_sub E A typ_top
+| W_fvar: forall E X ,
+    binds X bind_sub E ->
+    wf_env E ->
+    wk_sub E (typ_fvar X) (typ_fvar X)
+| W_arrow: forall E A1 A2 B1 B2,
+    wk_sub E B1 A1 ->
+    wk_sub E A2 B2 ->
+    wk_sub E (typ_arrow A1 A2) (typ_arrow B1 B2)
+| W_rec: forall E A B L,
+    (forall X , X \notin L -> 
+                wk_sub (X ~ bind_sub ++ E) (open_tt A X) (open_tt B X)) ->
+    (forall X , X \notin L ->
+                posvar Pos X (open_tt A X) (open_tt B X)) ->
+    wk_sub E (typ_mu A) (typ_mu B)
+| W_refl: forall E A,
+    wf_env E ->
+    WF E (typ_mu A) ->
+    wk_sub E (typ_mu A) (typ_mu A).
+
+Hint Constructors wk_sub : core.
+
+Lemma wk_sub_to_sam2: forall E A B,
+    wk_sub E A B -> sub_amber2 E A B.
+Proof with auto.
+  intros.
+  induction H...
+  -
+    apply sam2_rec with (L:=L \u fv_tt A \u fv_tt B)...
+    intros.
+    apply pos_rec with (L:=L \u fv_tt A \u fv_tt B)...
+    intros.
+    rewrite subst_tt_intro with (X:=X)...
+    remember (subst_tt X Y (open_tt A X)).
+    rewrite subst_tt_intro with (X:=X)...
+    subst.
+    apply pos_rename_2...
+    solve_notin.
+    apply notin_fv_tt_open_aux...
+    apply notin_fv_tt_open_aux...
+  -
+    apply sub_amber2_refl...
+Qed.
+
+Lemma sam2_to_wk_sub: forall E A B,
+    sub_amber2 E A B -> wk_sub E A B.
+Proof with auto.
+  intros.
+  assert (Ht:=H).
+  apply suba2_regular in Ht.
+  induction H...
+  -
+    destruct_hypos.
+    dependent destruction H2.
+    dependent destruction H3...
+  -
+    pick fresh X.
+    assert (X\notin L) by auto.
+    apply H1 in H2.
+    dependent destruction H2.
+    +
+      destruct_hypos.
+      dependent destruction H5.
+      dependent destruction H6.
+      apply W_rec with (L:=L \u L0 \u {{X}} \u L1 \u L2 \u dom E);intros...      
+    +
+      destruct_hypos.
+      apply W_refl...
+Qed.
+
+      

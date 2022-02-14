@@ -1,6 +1,6 @@
 Require Import Metalib.Metatheory.
 Require Import Program.Equality.
-Require Export subtyping.
+Require Export FiniteUnfolding.
 
 
 Lemma strengthening_wf: forall E1 E2 T X m,

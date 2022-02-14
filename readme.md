@@ -9,13 +9,13 @@ This document explains how to run the Coq formulations.
 
 We strongly recommend you to install Coq proof assistant by ```opam2```.
 
-1. Install [Coq](https://coq.inria.fr/opam-using.html)(>=8.10). The latest version of Coq is 8.12. In Ubuntu-like system, you can install Coq by typing these commands in terminal.
+1. Install [Coq](https://coq.inria.fr/opam-using.html)(=8.13). The proof is built under the version of Coq is 8.13. In Ubuntu-like system, you can install Coq by typing these commands in terminal.
 	
 		
 		>> opam install opam-depext
 		>> opam-depext coq
 		>> sudo apt-get install m4
-		>> opam pin add coq 8.12.0
+		>> opam pin add coq 8.13.0
 		
 
 2. Install [metalib](https://github.com/plclub/metalib). In terminal, type
@@ -23,6 +23,7 @@ We strongly recommend you to install Coq proof assistant by ```opam2```.
 		
 		>> git clone https://github.com/plclub/metalib.git
 		>> cd metalib/Metalib
+		(Replace `omega` library by `lia` library since Metalib only supports coq 8.10 in Feb 2022)
 		>> make
 		>> make install
 		
@@ -32,7 +33,7 @@ We strongly recommend you to install Coq proof assistant by ```opam2```.
 		>> cd path_to_src
 		>> make clean
 		>> make
-		>> make html
+
 		
 ## Guide
 
