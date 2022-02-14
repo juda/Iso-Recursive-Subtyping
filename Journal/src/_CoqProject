@@ -11,5 +11,4 @@ PositiveBase.v
 PositiveSubtyping.v
 AmberCompleteness.v
 NominalUnfolding.v
-AnchorUnfolding.v
 Decidability.v
