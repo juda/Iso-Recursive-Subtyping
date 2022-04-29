@@ -2284,3 +2284,29 @@ Proof with auto.
   apply amber_complete...
   apply completeness  in H...
 Qed.
+
+Corollary amber_transitivity: forall A B C,
+    sub_amber nil A B ->
+    sub_amber nil B C ->
+    sub_amber nil A C.
+Proof with auto.
+  intros.
+  apply amber_soundness in H.
+  apply amber_soundness in H0.
+  apply amber_complete.
+  simpl in *.
+  apply trans_algo with (B:=B)...
+Qed.
+
+
+Corollary amber_unfolding: forall A B ,
+    sub_amber nil (typ_mu A) (typ_mu B) ->
+    sub_amber nil (open_tt A (typ_mu A)) (open_tt B (typ_mu B)).
+Proof with auto.
+  intros.
+  apply amber_soundness in H.
+  apply unfolding_lemma_version2 in H.
+  simpl in *.
+  
+  apply amber_complete in H...
+Qed.
